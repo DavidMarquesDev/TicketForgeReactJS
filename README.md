@@ -1,26 +1,86 @@
 # TicketForgeReactJS
 
-Aplicação frontend em React para o ecossistema TicketForge, responsável por consumir a API em NestJS e oferecer a interface de autenticação, gestão de tickets e comentários.
+Frontend do **TicketForge** desenvolvido em **React + TypeScript**, responsável por consumir a API em **NestJS** para autenticação, gestão de tickets e comentários.
 
-## Objetivo do projeto
+## Visão geral
 
-Este projeto implementa o cliente web do TicketForge com foco em:
+O projeto implementa uma aplicação web com:
 
-- autenticação JWT;
-- gestão completa de tickets (criar, listar, detalhar, atribuir e atualizar status);
-- gestão de comentários por ticket;
-- tratamento padronizado de erros e paginação server-side;
-- experiência orientada a papéis (`admin`, `support`, `user`).
+- autenticação JWT com controle de sessão;
+- rotas protegidas por autenticação e papel de usuário;
+- fluxo completo de tickets (criação, listagem, detalhe, atribuição e alteração de status);
+- fluxo completo de comentários por ticket (criar, listar, editar e excluir);
+- tratamento consistente de erros da API;
+- layout responsivo com topbar, sidebar e área de conteúdo.
+
+## Tecnologias e bibliotecas
+
+### Runtime
+
+- `react` `^19.1.1`
+- `react-dom` `^19.1.1`
+- `react-router-dom` `^7.8.2`
+
+### Build, tipagem e qualidade
+
+- `vite` `^7.1.2`
+- `typescript` `~5.8.3`
+- `@vitejs/plugin-react` `^5.0.0`
+- `eslint` `^9.34.0`
+- `typescript-eslint` `^8.41.0`
+- `eslint-plugin-react-hooks` `^5.2.0`
+- `eslint-plugin-react-refresh` `^0.4.20`
+
+## Requisitos
+
+- Node.js 20+ (recomendado)
+- npm 10+ (recomendado)
+- API TicketForge (NestJS) disponível
+
+## Como rodar o projeto
+
+### 1) Instalar dependências
+
+```bash
+npm install
+```
+
+### 2) Configurar URL da API
+
+Por padrão o frontend usa:
+
+- `http://localhost:3000/api/v1`
+
+Se precisar mudar, crie um arquivo `.env` na raiz com:
+
+```bash
+VITE_API_BASE_URL=http://localhost:3000/api/v1
+```
+
+### 3) Executar em desenvolvimento
+
+```bash
+npm run dev
+```
+
+A aplicação ficará disponível na URL exibida pelo Vite (normalmente `http://localhost:5173`).
+
+## Scripts disponíveis
+
+- `npm run dev`: inicia o servidor de desenvolvimento
+- `npm run build`: executa typecheck de build (`tsc -b`) e gera o bundle de produção
+- `npm run preview`: sobe a versão buildada localmente
+- `npm run lint`: valida padrões com ESLint
+- `npm run typecheck`: valida tipos TypeScript sem gerar build
 
 ## Integração com a API NestJS
 
 - Prefixo base: `/api/v1`
-- Base URL local esperada: `http://localhost:3000/api/v1`
-- Documentação da API:
-  - Swagger: `http://localhost:3000/docs/api`
-  - ReDoc: `http://localhost:3000/docs/redoc`
+- URL local esperada: `http://localhost:3000/api/v1`
+- Swagger: `http://localhost:3000/docs/api`
+- ReDoc: `http://localhost:3000/docs/redoc`
 
-### Endpoints principais consumidos
+### Endpoints consumidos
 
 #### Auth
 
@@ -44,27 +104,64 @@ Este projeto implementa o cliente web do TicketForge com foco em:
 - `PATCH /tickets/:ticketId/comments/:id`
 - `DELETE /tickets/:ticketId/comments/:id`
 
-## Regras de negócio que impactam o frontend
+## Regras de negócio refletidas no frontend
 
-- transições válidas de status: `open -> in_progress -> resolved -> closed`;
-- ação de atribuir ticket disponível para `support` e `admin`;
-- edição/exclusão de comentário permitida para autor do comentário ou `admin`;
-- tratamento de erros por status:
-  - `400`: validação;
-  - `401`: sessão inválida/expirada;
-  - `403`: sem permissão;
-  - `404`: recurso não encontrado;
-  - `409`: conflito de regra de negócio;
-  - `429`: limite de tentativas.
+- transição de status permitida: `open -> in_progress -> resolved -> closed`;
+- ação de atribuição liberada para `support` e `admin`;
+- edição e exclusão de comentário liberadas para autor ou `admin`;
+- mapeamento de erros HTTP para UX:
+  - `400` validação;
+  - `401` sessão inválida/expirada;
+  - `403` sem permissão;
+  - `404` recurso não encontrado;
+  - `409` conflito de regra;
+  - `429` limite de tentativas.
 
-## Diretrizes técnicas de frontend
+## Estrutura do projeto
 
-- enviar token JWT em `Authorization: Bearer <token>`;
-- validar sessão no bootstrap com `GET /auth/me`;
-- aplicar paginação server-side em tickets e comentários;
-- suportar os dois formatos de sucesso da API (`data` e retorno direto com `success`);
-- capturar `trace_id` e `x-request-id` para suporte em incidentes.
+```text
+src/
+  core/
+    auth/
+    config/
+    http/
+    router/
+    utils/
+  modules/
+    auth/
+      application/
+      domain/
+      infrastructure/
+      presentation/
+    tickets/
+      application/
+      domain/
+      infrastructure/
+      presentation/
+    comments/
+      application/
+      domain/
+      infrastructure/
+      presentation/
+  shared/
+  styles/
+```
 
-## Status
+### Padrão adotado por módulo
 
-Repositório inicializado para receber a implementação do frontend React do TicketForge.
+- `domain`: tipos e contratos de domínio
+- `application`: serviços de caso de uso
+- `infrastructure`: implementação de repositórios HTTP
+- `presentation`: páginas, componentes e contexto React
+
+## Comportamentos técnicos importantes
+
+- token JWT armazenado em `sessionStorage`;
+- envio automático de token nas requisições autenticadas;
+- logout automático em respostas `401`;
+- bootstrap de sessão com `/auth/me` para manter usuário logado;
+- suporte aos dois formatos de sucesso da API (`data` envelopado e retorno direto com `success`).
+
+## Status atual
+
+Projeto com base funcional de autenticação, tickets e comentários, incluindo layout principal responsivo e pronto para evolução dos módulos.
