@@ -98,64 +98,64 @@ export const CommentsPanel = ({ ticketId }: CommentsPanelProps) => {
     };
 
     return (
-        <div className="card">
-            <h3>Comentários</h3>
-            <form onSubmit={handleCreate}>
-                <div className="row">
-                    <input
-                        required
-                        placeholder="Novo comentário"
-                        value={content}
-                        onChange={(event) => setContent(event.target.value)}
-                    />
-                    <button type="submit">Comentar</button>
-                </div>
+        <section className="tf-page-card">
+            <h3 className="tf-card-title">Comentários</h3>
+            <form onSubmit={handleCreate} className="tf-inline-form">
+                <input
+                    required
+                    placeholder="Novo comentário"
+                    value={content}
+                    onChange={(event) => setContent(event.target.value)}
+                />
+                <button type="submit">Comentar</button>
             </form>
             {error ? <p className="error">{error}</p> : null}
             {isLoading ? <p className="muted">Carregando comentários...</p> : null}
             {!isLoading && comments.length === 0 ? <p className="muted">Nenhum comentário.</p> : null}
-            {comments.map((comment) => (
-                <div className="card" key={comment.id}>
-                    <p className="muted">
-                        #{comment.id} · Autor {comment.authorId} · {new Date(comment.createdAt).toLocaleString('pt-BR')}
-                    </p>
-                    {editingCommentId === comment.id ? (
-                        <div className="row">
-                            <input value={editingContent} onChange={(event) => setEditingContent(event.target.value)} />
-                            <button type="button" onClick={() => void handleUpdate(comment.id)}>
-                                Salvar
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setEditingCommentId(null);
-                                    setEditingContent('');
-                                }}
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                    ) : (
-                        <p>{comment.content}</p>
-                    )}
-                    {canManageComment(comment) && editingCommentId !== comment.id ? (
-                        <div className="row">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setEditingCommentId(comment.id);
-                                    setEditingContent(comment.content);
-                                }}
-                            >
-                                Editar
-                            </button>
-                            <button type="button" onClick={() => void handleDelete(comment.id)}>
-                                Excluir
-                            </button>
-                        </div>
-                    ) : null}
-                </div>
-            ))}
-        </div>
+            <div className="tf-ticket-list">
+                {comments.map((comment) => (
+                    <article className="tf-ticket-card" key={comment.id}>
+                        <p className="muted">
+                            #{comment.id} · Autor {comment.authorId} · {new Date(comment.createdAt).toLocaleString('pt-BR')}
+                        </p>
+                        {editingCommentId === comment.id ? (
+                            <div className="tf-inline-form">
+                                <input value={editingContent} onChange={(event) => setEditingContent(event.target.value)} />
+                                <button type="button" onClick={() => void handleUpdate(comment.id)}>
+                                    Salvar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setEditingCommentId(null);
+                                        setEditingContent('');
+                                    }}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        ) : (
+                            <p>{comment.content}</p>
+                        )}
+                        {canManageComment(comment) && editingCommentId !== comment.id ? (
+                            <div className="tf-inline-form">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setEditingCommentId(comment.id);
+                                        setEditingContent(comment.content);
+                                    }}
+                                >
+                                    Editar
+                                </button>
+                                <button type="button" onClick={() => void handleDelete(comment.id)}>
+                                    Excluir
+                                </button>
+                            </div>
+                        ) : null}
+                    </article>
+                ))}
+            </div>
+        </section>
     );
 };

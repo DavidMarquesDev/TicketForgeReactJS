@@ -9,7 +9,7 @@ import { TicketsApiRepository } from '../../infrastructure/tickets-api.repositor
 const ticketsService = new TicketsService(new TicketsApiRepository());
 
 export const TicketsPage = () => {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -64,40 +64,54 @@ export const TicketsPage = () => {
         }
     };
 
+    const getStatusClassName = (ticketStatus: TicketStatus): string => {
+        if (ticketStatus === 'in_progress') {
+            return 'tf-status-badge tf-status-in-progress';
+        }
+
+        if (ticketStatus === 'resolved') {
+            return 'tf-status-badge tf-status-resolved';
+        }
+
+        if (ticketStatus === 'closed') {
+            return 'tf-status-badge tf-status-closed';
+        }
+
+        return 'tf-status-badge tf-status-open';
+    };
+
     return (
-        <div className="app-shell">
-            <div className="card">
-                <div className="row">
-                    <h1>Tickets</h1>
-                    <span className="muted">
-                        Usuário: {user?.name} ({user?.role})
-                    </span>
-                    <button type="button" onClick={() => void logout()}>
-                        Sair
-                    </button>
+        <div className="tf-page">
+            <header className="tf-page-header">
+                <div>
+                    <h1 className="tf-page-title">Tickets</h1>
+                    <p className="tf-page-description">
+                        Gerencie chamados por prioridade e status. Sessão atual: {user?.name} ({user?.role}).
+                    </p>
                 </div>
-            </div>
+            </header>
 
-            <div className="card">
-                <h2>Criar ticket</h2>
-                <form onSubmit={handleCreate}>
-                    <div className="row">
-                        <input required placeholder="Título" value={title} onChange={(event) => setTitle(event.target.value)} />
-                        <input
-                            required
-                            minLength={10}
-                            placeholder="Descrição"
-                            value={description}
-                            onChange={(event) => setDescription(event.target.value)}
-                        />
-                        <button type="submit">Criar</button>
-                    </div>
+            <section className="tf-page-card">
+                <h2 className="tf-card-title">Criar ticket</h2>
+                <form onSubmit={handleCreate} className="tf-inline-form">
+                    <input required placeholder="Título do ticket" value={title} onChange={(event) => setTitle(event.target.value)} />
+                    <input
+                        required
+                        minLength={10}
+                        placeholder="Descrição detalhada"
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
+                    />
+                    <button type="submit">Criar</button>
                 </form>
-            </div>
+            </section>
 
-            <div className="card">
-                <div className="row">
-                    <h2>Lista de tickets</h2>
+            <section className="tf-page-card">
+                <div className="tf-page-header">
+                    <div>
+                        <h2 className="tf-card-title">Lista de tickets</h2>
+                        <p className="tf-page-description">Visualize os chamados com paginação e filtro por status.</p>
+                    </div>
                     <select value={status} onChange={(event) => setStatus(event.target.value as TicketStatus | '')}>
                         <option value="">Todos os status</option>
                         <option value="open">Open</option>
@@ -106,20 +120,30 @@ export const TicketsPage = () => {
                         <option value="closed">Closed</option>
                     </select>
                 </div>
+
                 {error ? <p className="error">{error}</p> : null}
                 {isLoading ? <p className="muted">Carregando tickets...</p> : null}
                 {!isLoading && tickets.length === 0 ? <p className="muted">Nenhum ticket encontrado.</p> : null}
-                {tickets.map((ticket) => (
-                    <div className="card" key={ticket.id}>
-                        <div className="row">
-                            <strong>#{ticket.id}</strong>
-                            <span>{ticket.title}</span>
-                            <span className="muted">Status: {ticket.status}</span>
-                            <Link to={`/tickets/${ticket.id}`}>Ver detalhe</Link>
-                        </div>
-                    </div>
-                ))}
-                <div className="row">
+
+                <div className="tf-ticket-list">
+                    {tickets.map((ticket) => (
+                        <article className="tf-ticket-card" key={ticket.id}>
+                            <div className="tf-ticket-top">
+                                <span className={getStatusClassName(ticket.status)}>{ticket.status.replace('_', ' ')}</span>
+                                <Link to={`/tickets/${ticket.id}`}>Ver detalhe</Link>
+                            </div>
+                            <h3 className="tf-ticket-title">{ticket.title}</h3>
+                            <p className="tf-ticket-description">{ticket.description}</p>
+                            <div className="tf-ticket-meta">
+                                <span>#{ticket.id}</span>
+                                <span>Criado por {ticket.createdBy}</span>
+                                <span>{new Date(ticket.createdAt).toLocaleString('pt-BR')}</span>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+
+                <div className="tf-pagination">
                     <button type="button" disabled={page <= 1} onClick={() => setPage((previous) => previous - 1)}>
                         Anterior
                     </button>
@@ -130,7 +154,7 @@ export const TicketsPage = () => {
                         Próxima
                     </button>
                 </div>
-            </div>
+            </section>
         </div>
     );
 };

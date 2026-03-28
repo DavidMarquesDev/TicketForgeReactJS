@@ -33,33 +33,32 @@ export const RegisterPage = () => {
     };
 
     return (
-        <div className="app-shell">
-            <div className="card">
-                <h1>Criar conta</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="row">
-                        <input required placeholder="Nome completo" value={name} onChange={(event) => setName(event.target.value)} />
-                        <input
-                            required
-                            minLength={11}
-                            maxLength={11}
-                            placeholder="CPF (11 dígitos)"
-                            value={cpf}
-                            onChange={(event) => setCpf(event.target.value.replace(/\D/g, ''))}
-                        />
-                        <input required type="email" placeholder="E-mail" value={email} onChange={(event) => setEmail(event.target.value)} />
-                        <input
-                            required
-                            minLength={8}
-                            type="password"
-                            placeholder="Senha"
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                        />
-                        <button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Criando...' : 'Criar conta'}
-                        </button>
-                    </div>
+        <div className="tf-auth-layout">
+            <div className="tf-auth-card">
+                <h1 className="tf-auth-title">Criar conta</h1>
+                <p className="tf-auth-subtitle">Registre-se para abrir, acompanhar e comentar tickets.</p>
+                <form onSubmit={handleSubmit} className="tf-auth-form">
+                    <input required placeholder="Nome completo" value={name} onChange={(event) => setName(event.target.value)} />
+                    <input
+                        required
+                        minLength={11}
+                        maxLength={11}
+                        placeholder="CPF (11 dígitos)"
+                        value={cpf}
+                        onChange={(event) => setCpf(event.target.value.replace(/\D/g, ''))}
+                    />
+                    <input required type="email" placeholder="E-mail" value={email} onChange={(event) => setEmail(event.target.value)} />
+                    <input
+                        required
+                        minLength={8}
+                        type="password"
+                        placeholder="Senha"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
+                    <button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? 'Criando...' : 'Criar conta'}
+                    </button>
                 </form>
                 {error ? <p className="error">{error}</p> : null}
                 <p>

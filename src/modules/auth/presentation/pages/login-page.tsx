@@ -34,32 +34,30 @@ export const LoginPage = () => {
     };
 
     return (
-        <div className="app-shell">
-            <div className="card">
-                <h1>Entrar no TicketForge</h1>
-                <p className="muted">Use CPF e senha para acessar os tickets.</p>
-                <form onSubmit={handleSubmit}>
-                    <div className="row">
-                        <input
-                            required
-                            minLength={11}
-                            maxLength={11}
-                            placeholder="CPF (11 dígitos)"
-                            value={cpf}
-                            onChange={(event) => setCpf(event.target.value.replace(/\D/g, ''))}
-                        />
-                        <input
-                            required
-                            minLength={8}
-                            type="password"
-                            placeholder="Senha"
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                        />
-                        <button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Entrando...' : 'Entrar'}
-                        </button>
-                    </div>
+        <div className="tf-auth-layout">
+            <div className="tf-auth-card">
+                <h1 className="tf-auth-title">Entrar no TicketForge</h1>
+                <p className="tf-auth-subtitle">Acesse sua conta para acompanhar tickets e comentários.</p>
+                <form onSubmit={handleSubmit} className="tf-auth-form">
+                    <input
+                        required
+                        minLength={11}
+                        maxLength={11}
+                        placeholder="CPF (11 dígitos)"
+                        value={cpf}
+                        onChange={(event) => setCpf(event.target.value.replace(/\D/g, ''))}
+                    />
+                    <input
+                        required
+                        minLength={8}
+                        type="password"
+                        placeholder="Senha"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
+                    <button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? 'Entrando...' : 'Entrar'}
+                    </button>
                 </form>
                 {error ? <p className="error">{error}</p> : null}
                 <p>

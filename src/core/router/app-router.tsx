@@ -11,8 +11,10 @@ export const AppRouter = () => (
         <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Navigate to="/tickets" replace />} />
             <Route path="/tickets" element={<TicketsPage />} />
             <Route path="/tickets/:id" element={<TicketDetailsPage />} />
+            <Route path="/users" element={<div className="tf-page-card">Módulo de usuários disponível em breve.</div>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/tickets" replace />} />

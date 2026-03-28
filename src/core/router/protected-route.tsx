@@ -1,6 +1,7 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../modules/auth/presentation/context/use-auth';
 import type { UserRole } from '../../modules/auth/domain/auth.types';
+import { AppLayout } from './app-layout';
 
 type ProtectedRouteProps = {
     roles?: UserRole[];
@@ -11,7 +12,7 @@ export const ProtectedRoute = ({ roles }: ProtectedRouteProps) => {
     const { isAuthenticated, isLoading, user } = useAuth();
 
     if (isLoading) {
-        return <div className="app-shell">Carregando sessão...</div>;
+        return <div className="tf-auth-layout">Carregando sessão...</div>;
     }
 
     if (!isAuthenticated) {
@@ -22,5 +23,5 @@ export const ProtectedRoute = ({ roles }: ProtectedRouteProps) => {
         return <Navigate to="/tickets" replace />;
     }
 
-    return <Outlet />;
+    return <AppLayout />;
 };
