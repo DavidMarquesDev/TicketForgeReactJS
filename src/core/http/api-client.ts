@@ -54,7 +54,7 @@ class ApiClient
 
         const payload = (await response.json()) as ApiResponse<T>;
         if (!response.ok) {
-            if (response.status === 401) {
+            if (response.status === 401 && token) {
                 this.onUnauthorized();
             }
             throw new HttpError(response.status, 'success' in payload && !payload.success ? payload : undefined);

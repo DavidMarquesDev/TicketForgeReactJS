@@ -1,4 +1,4 @@
-import { clearAccessToken, setAccessToken } from '../../../core/auth/token-storage';
+import { clearAccessToken, getAccessToken, setAccessToken } from '../../../core/auth/token-storage';
 import type { AuthUser, LoginRequest, RegisterRequest } from '../domain/auth.types';
 import type { AuthRepository } from './auth.repository';
 
@@ -25,6 +25,11 @@ export class AuthService
 
     public async bootstrap(): Promise<AuthUser | null>
     {
+        const token = getAccessToken();
+        if (!token) {
+            return null;
+        }
+
         try {
             return await this.repository.me();
         } catch {
